@@ -1,5 +1,5 @@
 # Cases:
-## University St Gallen
+## University St Gallen - Room 4
 
 Food Tracking, Gut Health, Mental Health, 
 
@@ -9,24 +9,7 @@ Niko:
 Automated Food Detection
 Current solutions: Design Issues with Longterm User Engagement
 
-## Kanton St. Gallen
-VoiceBot
-
-New Era of Customer Service
-
-Redefine the interface between the people and the administration.
-#UnderstandingAssitant
-
-More than tech "Inclusive and Efficient and Bold".
-
-# Bell Food Group
-
-Swiss Market Leader
-Virtual Coach for everything
-
-Creepy Idea lol
-
-## St Gallen City
+## St Gallen City 
 
 Digital Transformation Team (Nikolas), 4th time here
 
@@ -71,58 +54,6 @@ Stefan = Leader
 Looking for new ideas
 
 Data is collected, what to do with it?
-
-## Syngenta Group
-
-Climate Change
-
-Nationwide is not enough / Blockchain?
-
-Aggriculture
-
-How to feed a growing population without f'cking up the soil
-
-#Together: 1.3B work on fields
-
-Satellite Images / Image Recognition 
-
-Exclusive API Data Access
-
-Madrid
-
-## G20 Global Initivaive
-
-2015 - 2019 Land died or something
-
-Combat Desertification / degregation
-
-Wildfires Cyclones and Tzunamies
-
-Protect and restore the lands
-
-Brazil
-
-Wildfires <- biggest problem
-
-protect diverse ecosystems
-
-#LandIsLife
-
-Paulas Vision:
-
-Land... 
-
-## Start Fellowship
-
-Incubator Programm
-
-35 startups / year
-
-Problem: Data is at too many places
-
-Data Tracking for their Startups
-
-Can talk to them about startup financial stuff
 
 # Side quests
 
