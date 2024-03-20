@@ -4,6 +4,10 @@ import socket
 import os
 import sys
 
+workspace_count = 0
+retail_count = 0
+other_count = 0
+other_events = []
 
 def get_API_Key_and_auth():
     # Gets public key from spaces and places in correct format
@@ -49,18 +53,35 @@ s.headers = {'X-API-Key': apiKey}
 r = s.get(
     'https://partners.dnaspaces.io/api/partners/v1/firehose/events', stream=True)  # Change this to .io if needed
 
+
+
 # Jumps through every new event we have through firehose
 print("Starting Stream")
-for line in r.iter_lines():
-    if line:
-    
-        # decodes payload into useable format
-        decoded_line = line.decode('utf-8')
-        event = json.loads(decoded_line)
+try:
+    for line in r.iter_lines():
+        if line:
+            # decodes payload into useable format
+            decoded_line = line.decode('utf-8')
+            event = json.loads(decoded_line)
 
-        # writes every event to the logs.json in readible format
-        f.write(str(json.dumps(json.loads(line), indent=4, sort_keys=True)))
+            # writes every event to the logs.json in readable format
+            f.write(str(json.dumps(json.loads(line), indent=4, sort_keys=True)))
 
-        # gets the event type out the JSON event and prints to screen
-        eventType = event['eventType']
-        print(eventType)
+            # gets the event type out the JSON event and prints to screen
+            eventType = event['eventType']
+            print("New Event")
+
+            if eventType == 'Simulation-Workspaces':
+                workspace_count = workspace_count + 1
+            elif eventType == 'Simulation-Retail':
+                retail_count = retail_count + 1
+            else:
+                other_count = other_count + 1
+                other_events.append(eventType)
+
+except KeyboardInterrupt:
+    print("Programm Ended by Keyboard Interrupt")
+    print("Workspace Event Count:" + str(workspace_count))
+    print("Retail Event Count:" + str(retail_count))
+    print("Other Event Count:" + str(other_count))
+    print("Other Event types:" + str(other_events))
