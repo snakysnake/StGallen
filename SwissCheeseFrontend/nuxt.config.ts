@@ -8,4 +8,7 @@ export default defineNuxtConfig({
     },
   },
   css: ['~/assets/css/main.css'],
+  plugins: [
+    { src: "~/plugins/jquery", mode: "client" },
+  ],
 })
