@@ -1,5 +1,6 @@
 <template>
   <div>
-    <Suh />
+    <NavBar />
+    <SwagMap />
   </div>
 </template>
