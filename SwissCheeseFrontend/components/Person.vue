@@ -1,6 +1,7 @@
 <template>
     <div class="p-2 rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`" :class="parentClasses"
         @click="$emit('selected', person)">
+        {{ lastMovement }}
         <div class="relative">
             <div class="p-2 absolute transition-opacity rounded-full"
                 :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
@@ -63,6 +64,7 @@ export default {
             xPos: 0,
             movedRecently: false,
             movementAmount: 0,
+            lastMovement: ""
         }
     },
     watch: {
@@ -73,13 +75,15 @@ export default {
                 this.movementAmount * 2;
             }
             if (!this.wait) {
-                if (this.yPos > this.height - 10 || this.yPos < 2) {
-                    this.yPos = this.initYPos;
+                if (!this.person.evacuate) {
+                    if (this.yPos > this.height - 10 || this.yPos < 2) {
+                        this.yPos = this.initYPos;
+                    }
                 }
                 this.wait = true;
                 let sleepTime = Math.ceil(Math.random() * 200) * this.movementAmount;
                 if (this.person.evacuate) {
-                    sleepTime / 40
+                    sleepTime / 100
                 }
 
                 await this.sleep(sleepTime);
@@ -95,13 +99,15 @@ export default {
                 this.movementAmount * 2;
             }
             if (!this.wait) {
-                if (this.xPos > this.width - 10 || this.xPos < 2) {
-                    this.xPos = this.initXPos;
+                if (!this.person.evacuate) {
+                    if (this.xPos > this.width - 10 || this.xPos < 2) {
+                        this.xPos = this.initXPos;
+                    }
                 }
                 this.wait = true;
                 let sleepTime = Math.floor(Math.random() * 200) * this.movementAmount;
                 if (this.person.evacuate) {
-                    sleepTime / 40
+                    sleepTime / 100
                 }
 
                 await this.sleep(sleepTime);
@@ -180,20 +186,24 @@ export default {
             }
         },
         up() {
-            this.yPos = this.yPos + this.movementAmount;
-            this.movedRecently = true;
-        },
-        down() {
             this.yPos = this.yPos - this.movementAmount;
             this.movedRecently = true;
+            this.lastMovement = "up"
+        },
+        down() {
+            this.yPos = this.yPos + this.movementAmount;
+            this.movedRecently = true;
+            this.lastMovement = "down"
         },
         left() {
             this.xPos = this.xPos - this.movementAmount;
             this.movedRecently = true;
+            this.lastMovement = "left";
         },
         right() {
             this.xPos = this.xPos + this.movementAmount;
             this.movedRecently = true;
+            this.lastMovement = "right";
         },
         sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
