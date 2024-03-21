@@ -69,6 +69,9 @@ export default {
     },
     watch: {
         async yPos(nPos, oldPos) {
+            if (this.person.evacuate) {
+                this.emitDeletionIfNeeded()
+            }
             this.movementAmount = Math.ceil(Math.random() * 25);
 
             if (this.person.evacuate) {
@@ -93,6 +96,9 @@ export default {
             this.wait = false;
         },
         async xPos(nPos, oldPos) {
+            if (this.person.evacuate) {
+                this.emitDeletionIfNeeded()
+            }
             this.movementAmount = Math.ceil(Math.random() * 25);
 
             if (this.person.evacuate) {
@@ -128,6 +134,11 @@ export default {
         this.yPos = this.initYPos;
     },
     methods: {
+        emitDeletionIfNeeded() {
+            if (this.yPos < 0 || this.xPos < 0 || this.xPos > this.width || this.yPos > this.height) {
+                this.$emit("deleteme", this.person);
+            }
+        },
         move() {
             // Function to simulate movement
             let rand = Math.random();

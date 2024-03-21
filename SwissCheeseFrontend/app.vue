@@ -1,6 +1,7 @@
 <template>
   <div v-if="ready">
     <Stats />
+    {{ rooms[currentRoomIndex].peeps }}
     <section class="flex w-full">
       <div class="w-full max-w-xl m-4">
         <SimpleList />
@@ -34,7 +35,8 @@
         <button @click="this.modalOpen = true"
           class="mx-2 text-red-500 p-2 bg-red-100 rounded-lg mt-1">Evacuate</button>
         <TwoDimensionalMap :peeps="rooms[currentRoomIndex].peeps" :height="rooms[currentRoomIndex].height"
-          :width="rooms[currentRoomIndex].width" :name="rooms[currentRoomIndex].name">
+          :width="rooms[currentRoomIndex].width" :name="rooms[currentRoomIndex].name"
+          @deleteperson="removePersonFromArray">
           <img :src="rooms[currentRoomIndex].image" :alt="rooms[currentRoomIndex].name">
         </TwoDimensionalMap>
       </div>
@@ -62,6 +64,15 @@ export default {
 
       this.modalOpen = false;
     },
+    removePersonFromArray(person) {
+      console.log("Trying to remvoe person");
+      // find person in array... 
+      for (let i = this.rooms[this.currentRoomIndex].peeps.length - 1; i >= 0; i--) {
+        if (this.rooms[this.currentRoomIndex].peeps[i].id == person.id) {
+          this.rooms[this.currentRoomIndex].peeps.splice(i, 1);
+        }
+      }
+    }
   },
   data() {
     return {

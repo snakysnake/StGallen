@@ -13,7 +13,7 @@
                 <slot />
                 <Person class="absolute" v-for="person in peeps" :key="person" :person="person"
                     :init-x-pos="person.xPos" :init-y-pos="person.yPos" :height="height" :width="width"
-                    @selected="selectPerson" />
+                    @selected="selectPerson" @deleteme="deletePerson" />
             </div>
         </div>
     </div>
@@ -34,10 +34,6 @@ export default {
             type: Number,
             default: 50
         },
-        people: {
-            type: Number,
-            default: 1
-        },
         name: {
             type: String,
             default: "Room N"
@@ -57,6 +53,9 @@ export default {
         selectPerson(person) {
             this.selectedPerson = person;
             this.$emit("selected", person);
+        },
+        deletePerson(person) {
+            this.$emit("deleteperson", person)
         }
     }
 }
