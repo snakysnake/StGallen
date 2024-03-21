@@ -38,7 +38,8 @@
     </section>
     <UserTable />
     <BetterModal :active="modalOpen" @close="modalOpen = false">
-      <DangerModalContent h2="Evacuate Room" h3="Do you want to evacuate this room? This can not be undone." @confirm="sendIt" @abort="modalOpen = false" />
+      <DangerModalContent h2="Evacuate Room" h3="Do you want to evacuate this room? This can not be undone."
+        @confirm="sendIt" @abort="modalOpen = false" />
     </BetterModal>
   </div>
 </template>
@@ -63,7 +64,6 @@ export default {
           width: 1000,
           image: "/sketch.jpg",
           name: "Room 1",
-          selectedPerson: {}
         },
         {
           id: 2,
@@ -72,7 +72,6 @@ export default {
           width: 1000,
           image: "/floorplan2.png",
           name: "Room 2",
-          selectedPerson: {}
         },
         {
           id: 3,
@@ -81,7 +80,6 @@ export default {
           width: 1000,
           image: "/floorplan3.jpg",
           name: "Room 3",
-          selectedPerson: {}
         }
       ]
     }
