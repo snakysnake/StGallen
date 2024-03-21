@@ -41,25 +41,25 @@ export default {
     },
     watch: {
         async yPos(nPos, oldPos) {
-            this.movementAmount = Math.ceil(Math.random() * 60);
+            this.movementAmount = Math.ceil(Math.random() * 33);
             if (!this.wait) {
                 if (this.yPos > this.height - 10 || this.yPos < 2) {
                     this.yPos = this.initYPos;
                 }
                 this.wait = true;
-                await this.sleep(Math.ceil(Math.random() * 200));
+                await this.sleep(Math.ceil(Math.random() * 5000));
                 this.move();
             }
             this.wait = false;
         },
         async xPos(nPos, oldPos) {
-            this.movementAmount = Math.ceil(Math.random() * 60);
+            this.movementAmount = Math.ceil(Math.random() * 33);
             if (!this.wait) {
                 if (this.xPos > this.width - 10 || this.xPos < 2) {
                     this.xPos = this.initXPos;
                 }
                 this.wait = true;
-                await this.sleep(Math.floor(Math.random() * 200));
+                await this.sleep(Math.floor(Math.random() * 5000));
                 this.move();
             }
             this.wait = false;
