@@ -22,6 +22,6 @@ const people = [
     { id: 2, name: 'No Answer' },
     { id: 3, name: 'Courtney Henry' },
     { id: 4, name: 'Kathryn Murphy' },
-    { id: 5, name: 'Theresa Webb' },
+    { id: 5, name: 'Theresa Webb' }
 ]
 </script>

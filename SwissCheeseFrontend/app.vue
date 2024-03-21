@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="ready">
     <Stats />
     <section class="flex w-full">
       <div class="w-full max-w-xl m-4">
@@ -24,19 +24,19 @@
                 <MenuItem v-for="(room, index) in rooms.length" @click="currentRoomIndex = index">
                 <a class="cursor-pointer"
                   :class="[rooms[index].id === room.id ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">{{
-                rooms[index].name }}</a>
+    rooms[index].name }}</a>
                 </MenuItem>
               </div>
             </MenuItems>
           </transition>
         </Menu>
-        <TwoDimensionalMap :people="rooms[currentRoomIndex].people" :height="rooms[currentRoomIndex].height"
+        <TwoDimensionalMap :peeps="rooms[currentRoomIndex].peeps" :height="rooms[currentRoomIndex].height"
           :width="rooms[currentRoomIndex].width" :name="rooms[currentRoomIndex].name">
           <img :src="rooms[currentRoomIndex].image" :alt="rooms[currentRoomIndex].name">
         </TwoDimensionalMap>
       </div>
     </section>
-    <UserTable />
+    <UserTable :people="rooms[currentRoomIndex].peeps" />
     <BetterModal :active="modalOpen" @close="modalOpen = false">
       <DangerModalContent h2="Evacuate Room" h3="Do you want to evacuate this room? This can not be undone."
         @confirm="sendIt" @abort="modalOpen = false" />
@@ -49,12 +49,12 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 </script>
 
-
 <script>
 export default {
   data() {
     return {
       modalOpen: false,
+      ready: false,
       currentRoomIndex: 0,
       rooms: [
         {
@@ -64,6 +64,7 @@ export default {
           width: 1000,
           image: "/sketch.jpg",
           name: "Room 1",
+          peeps: [],
         },
         {
           id: 2,
@@ -72,6 +73,7 @@ export default {
           width: 1000,
           image: "/floorplan2.png",
           name: "Room 2",
+          peeps: [],
         },
         {
           id: 3,
@@ -80,9 +82,37 @@ export default {
           width: 1000,
           image: "/floorplan3.jpg",
           name: "Room 3",
+          peeps: [],
         }
       ]
     }
+  },
+  created() {
+    const firstNames = ["Jan", "Maria", "Mark", "Andreas", "Markovic", "Pankaj", "Juli", "Anton", "Steven"];
+    const lastNames = ["Bauer", "Lee", "Darwin", "Antonovic", "Herzog", "Blauer", "Haumann", "Sherkan", "Dere"];
+    const emails = ["justinbieber@gmail.com", "im@fify.cent", "dont@fwme.com", "supercoolhacker@gmail.com"];
+    const phones = ["00491239132", "0123812389123", "0234812334", "004512381239", "0023932490"];
+
+
+    for (let n = 0; n < this.rooms.length; n++) {
+      for (let i = 0; i < this.rooms[n].people; i++) {
+        const name = firstNames[Math.floor(Math.random() * firstNames.length)] + " " + lastNames[Math.floor(Math.random() * lastNames.length)];
+        const mail = emails[Math.floor(Math.random() * emails.length)];
+        const phone = phones[Math.floor(Math.random() * phones.length)];
+
+        this.rooms[n].peeps.push({
+          name: name,
+          email: mail,
+          phone: phone,
+          id: Math.ceil(Math.random() * 100000),
+          xPos: Math.floor(Math.random() * this.rooms[n].width),
+          yPos: Math.floor(Math.random() * this.rooms[n].height),
+          evacuated: false
+        })
+      }
+    }
+
+    this.ready = true;
   },
 }
 </script>
