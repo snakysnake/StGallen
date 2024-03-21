@@ -1,7 +1,6 @@
 <template>
   <div v-if="ready">
     <Stats />
-    {{ rooms[currentRoomIndex].peeps }}
     <section class="flex w-full">
       <div class="w-full max-w-xl m-4">
         <SimpleList />
