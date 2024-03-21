@@ -1,12 +1,11 @@
-BetterModal.vue<template>
+<template>
     <div class="w-screen z-50 fixed max-h-full flex backdrop-blur-md min-h-screen overflow-y-scroll top-0 right-0 left-0 justify-center p-1 sm:py-0 sm:px-10 pt-10 sm:pt-0 transition-all min-w-full"
         style="background-color: rgba(0, 0, 0, 0.2)" :class="hiddenClass">
         <Transition>
             <div v-if="active" tabindex="-1"
                 class="top-0 right-0 left-0 mb-12 sm:mb-2 min-w-full md:min-w-[700px] lg:min-w-[700px] md:max-w-[1500px]">
                 <div class="relative p-2 sm:p-4 w-full min-h-full md:h-auto">
-                    <div
-                        class="relative rounded-lg shadow sm:p-2 bg-white dark:bg-gray-900 dark:ring-1 dark:ring-indigo-600 lg:my-20 lg:mt-10">
+                    <div class="relative rounded-lg shadow sm:p-2 bg-white lg:my-20 lg:mt-10">
                         <button type="button"
                             class="absolute top-2 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                             data-modal-toggle="popup-modal" @click="$emit('close')">

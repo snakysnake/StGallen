@@ -1,6 +1,6 @@
 <template>
     <div class="bg-red-400 p-2 rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`"
-        @click="$emit('stuff')">
+        @click="$emit('selected', person)">
         <div class="relative">
             <div class="p-2 bg-red-200 absolute transition-opacity rounded-full"
                 :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
@@ -28,6 +28,10 @@ export default {
         width: {
             type: Number,
             default: 100
+        },
+        person: {
+            type: Object,
+            default: () => { }
         }
     },
     data() {
@@ -41,25 +45,25 @@ export default {
     },
     watch: {
         async yPos(nPos, oldPos) {
-            this.movementAmount = Math.ceil(Math.random() * 33);
+            this.movementAmount = Math.ceil(Math.random() * 5);
             if (!this.wait) {
                 if (this.yPos > this.height - 10 || this.yPos < 2) {
                     this.yPos = this.initYPos;
                 }
                 this.wait = true;
-                await this.sleep(Math.ceil(Math.random() * 5000));
+                await this.sleep(Math.ceil(Math.random() * 500));
                 this.move();
             }
             this.wait = false;
         },
         async xPos(nPos, oldPos) {
-            this.movementAmount = Math.ceil(Math.random() * 33);
+            this.movementAmount = Math.ceil(Math.random() * 5);
             if (!this.wait) {
                 if (this.xPos > this.width - 10 || this.xPos < 2) {
                     this.xPos = this.initXPos;
                 }
                 this.wait = true;
-                await this.sleep(Math.floor(Math.random() * 5000));
+                await this.sleep(Math.floor(Math.random() * 500));
                 this.move();
             }
             this.wait = false;
