@@ -1,7 +1,7 @@
 <template>
     <div class="border-2 overflow-hidden" :style="`max-width: ${width}px; max-height: ${height}px;`">
         <div class="relative">
-            <img src="/sketch.jpg" alt="Floorplan">
+            <slot />
             <Person class="absolute" v-for="person in peeps" :key="person" :init-x-pos="person.xPos"
                 :init-y-pos="person.yPos" :height="height" :width="width" />
 

@@ -1,17 +1,26 @@
 <template>
   <div>
     <NavBar />
-    <TwoDimensionalMap :people="40" :height="500" :width="1000" />
-    <button
-      class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800"
-      @click="modalOpen = true">
-      <span
-        class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-        Teal to Lime
-      </span>
+    <button type="button" @click="modalOpen = true"
+      class="inline-flex items-center gap-x-2 rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+      Emergency
     </button>
+    <div class="justify-center">
+      <TwoDimensionalMap :people="20" :height="800" :width="1000">
+        <img src="/sketch.jpg" alt="Floorplan">
+      </TwoDimensionalMap>
+      <TwoDimensionalMap :people="100" :height="800" :width="1000">
+        <img src="/sketch.jpg" alt="Floorplan">
+      </TwoDimensionalMap>
+      <TwoDimensionalMap :people="10" :height="800" :width="1000">
+        <img src="/sketch.jpg" alt="Floorplan">
+      </TwoDimensionalMap>
+      <div class="border-2 w-[200px]">
+        <h1>Act</h1>
+      </div>
+    </div>
     <BetterModal :active="modalOpen" @close="modalOpen = false">
-      <p>Test</p>
+      <DangerModalContent h2="Evacuate Room" @confirm="sendIt" />
     </BetterModal>
   </div>
 </template>
