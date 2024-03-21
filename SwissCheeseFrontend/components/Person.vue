@@ -1,10 +1,10 @@
 <template>
-    <div class="bg-red-400 p-2 rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`"
+    <div class="p-2 rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`" :class="parentClasses"
         @click="$emit('selected', person)">
         <div class="relative">
-            <div class="p-2 bg-red-200 absolute transition-opacity rounded-full"
+            <div class="p-2 absolute transition-opacity rounded-full"
                 :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
-                :class="movedRecently ? 'opacity-50' : 'opacity-0'">
+                :class="childClasses">
             </div>
         </div>
     </div>
@@ -32,6 +32,28 @@ export default {
         person: {
             type: Object,
             default: () => { }
+        }
+    },
+    computed: {
+        parentClasses() {
+            if (!this.person.evacuate) {
+                return "bg-green-400";
+            }
+            return "bg-red-400"
+        },
+        childClasses() {
+            if (!this.person.evacuate) {
+                if (this.movedRecently) {
+                    return "opacity-50 bg-green-200";
+                }
+                return "opacity-0 bg-green-200"
+            }
+            else {
+                if (this.movedRecently) {
+                    return "opacity-50 bg-red-200";
+                }
+                return "opacity-0 bg-red-200"
+            }
         }
     },
     data() {

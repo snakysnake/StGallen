@@ -23,13 +23,16 @@
               <div class="py-1">
                 <MenuItem v-for="(room, index) in rooms.length" @click="currentRoomIndex = index">
                 <a class="cursor-pointer"
-                  :class="[rooms[index].id === room.id ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">{{
-    rooms[index].name }}</a>
+                  :class="[rooms[index].id === room.id ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
+                  {{ rooms[index].name }}
+                </a>
                 </MenuItem>
               </div>
             </MenuItems>
           </transition>
         </Menu>
+        <button @click="this.modalOpen = true"
+          class="mx-2 text-red-500 p-2 bg-red-100 rounded-lg mt-1">Evacuate</button>
         <TwoDimensionalMap :peeps="rooms[currentRoomIndex].peeps" :height="rooms[currentRoomIndex].height"
           :width="rooms[currentRoomIndex].width" :name="rooms[currentRoomIndex].name">
           <img :src="rooms[currentRoomIndex].image" :alt="rooms[currentRoomIndex].name">
@@ -38,8 +41,8 @@
     </section>
     <UserTable :people="rooms[currentRoomIndex].peeps" />
     <BetterModal :active="modalOpen" @close="modalOpen = false">
-      <DangerModalContent h2="Evacuate Room" h3="Do you want to evacuate this room? This can not be undone."
-        @confirm="sendIt" @abort="modalOpen = false" />
+      <DangerModalContent :h2="`Evacuate Room (${rooms[currentRoomIndex].name})`"
+        h3="Do you want to evacuate this room? This can not be undone." @confirm="sendIt" @abort="modalOpen = false" />
     </BetterModal>
   </div>
 </template>
@@ -51,6 +54,15 @@ import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 
 <script>
 export default {
+  methods: {
+    sendIt() {
+      for (let i = 0; i < this.rooms[this.currentRoomIndex].peeps.length; i++) {
+        this.rooms[this.currentRoomIndex].peeps[i].evacuate = true;
+      }
+
+      this.modalOpen = false;
+    },
+  },
   data() {
     return {
       modalOpen: false,
