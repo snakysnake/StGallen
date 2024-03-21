@@ -1,7 +1,13 @@
 <template>
     <div class="text-center"
         :style="`max-width: ${width}px; max-height: ${height}px;min-width: ${width}px; min-height: ${height}px;`">
-        <h1 class="font-bold text-2xl p-2">{{ name }}</h1>
+        <div class="flex justify-between">
+            <dd class="flex items-baseline">
+                <UsersIcon class="w-7 h-7 m-2" />
+                <p class="text-2xl font-semibold text-gray-900">{{ people }}</p>
+            </dd>
+            <h1 class="font-bold text-2xl p-2">{{ name }}</h1>
+        </div>
         <div class="border-2 rounded-lg overflow-hidden">
             <div class="relative">
                 <slot />
@@ -12,6 +18,10 @@
         </div>
     </div>
 </template>
+
+<script setup>
+import { UsersIcon } from '@heroicons/vue/24/outline'
+</script>
 
 <script>
 export default {

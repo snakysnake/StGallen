@@ -36,8 +36,9 @@
         </TwoDimensionalMap>
       </div>
     </section>
+    <UserTable />
     <BetterModal :active="modalOpen" @close="modalOpen = false">
-      <DangerModalContent h2="Evacuate Room" @confirm="sendIt" />
+      <DangerModalContent h2="Evacuate Room" h3="Do you want to evacuate this room? This can not be undone." @confirm="sendIt" @abort="modalOpen = false" />
     </BetterModal>
   </div>
 </template>
@@ -57,7 +58,7 @@ export default {
       rooms: [
         {
           id: 1,
-          people: 20,
+          people: 44,
           height: 800,
           width: 1000,
           image: "/sketch.jpg",
@@ -66,7 +67,7 @@ export default {
         },
         {
           id: 2,
-          people: 20,
+          people: 73,
           height: 800,
           width: 1000,
           image: "/floorplan2.png",
@@ -75,7 +76,7 @@ export default {
         },
         {
           id: 3,
-          people: 20,
+          people: 21,
           height: 800,
           width: 1000,
           image: "/floorplan3.jpg",
