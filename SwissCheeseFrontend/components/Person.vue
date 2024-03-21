@@ -1,14 +1,25 @@
 <template>
     <div class="p-2 rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`" :class="parentClasses"
         @click="$emit('selected', person)">
-        {{ lastMovement }}
-        <div class="relative">
-            <div class="p-2 absolute transition-opacity rounded-full"
-                :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
-                :class="childClasses">
+        <div class="w-3 h-3 mb-1">
+            <div v-if="lastMovement === 'right'">
+                {{ '>' }}
             </div>
-        </div>
-    </div>
+            <div v-if="lastMovement === 'left'">
+                {{ '<' }} </div>
+                    <div v-if="lastMovement === 'up'" class="rotate-90">
+                        {{ '<' }} </div>
+                            <div v-if="lastMovement === 'down'" class="rotate-90">
+                                {{ '>' }}
+                            </div>
+                    </div>
+                    <div class="relative">
+                        <div class="p-2 absolute transition-opacity rounded-full"
+                            :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
+                            :class="childClasses">
+                        </div>
+                    </div>
+            </div>
 </template>
 
 <script>
@@ -69,6 +80,9 @@ export default {
     },
     watch: {
         async yPos(nPos, oldPos) {
+            if (Math.random() > 0.999) {
+                this.$emit("evacme", this.person);
+            }
             if (this.person.evacuate) {
                 this.emitDeletionIfNeeded()
             }

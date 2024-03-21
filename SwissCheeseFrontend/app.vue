@@ -5,11 +5,11 @@
       <div class="w-full max-w-xl m-4">
         <SimpleList />
         <div class="bg-green-50 p-1 border rounded max-h-[440px] overflow-y-scroll">
-          <div class="border-l-4 border-yellow-200 bg-yellow-50 p-4 mb-2" v-for="log in logs">
+          <div class="border-l-4 p-4 mb-2" v-for="log in logs" :class="log.class">
             <div class="flex">
               <div class="ml-3">
                 <p class="text-sm text-yellow-700">
-                  {{ log }}
+                  {{ log.message }}
                 </p>
               </div>
             </div>
@@ -46,7 +46,7 @@
           class="mx-2 text-red-500 p-2 bg-red-100 rounded-lg mt-1">Evacuate</button>
         <TwoDimensionalMap :peeps="rooms[currentRoomIndex].peeps" :height="rooms[currentRoomIndex].height"
           :width="rooms[currentRoomIndex].width" :name="rooms[currentRoomIndex].name"
-          @deleteperson="removePersonFromArray">
+          @deleteperson="removePersonFromArray" @evacperson="evacPerson">
           <img :src="rooms[currentRoomIndex].image" :alt="rooms[currentRoomIndex].name">
         </TwoDimensionalMap>
       </div>
@@ -67,6 +67,14 @@ import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 <script>
 export default {
   methods: {
+    evacPerson(person) {
+      for (let i = this.rooms[this.currentRoomIndex].peeps.length - 1; i >= 0; i--) {
+        if (this.rooms[this.currentRoomIndex].peeps[i].id == person.id) {
+          this.rooms[this.currentRoomIndex].peeps[i].evacuate = true;
+          this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: User evacuating (${person.name})`, class: "bg-red-300" });
+        }
+      }
+    },
     sendIt() {
       for (let i = 0; i < this.rooms[this.currentRoomIndex].peeps.length; i++) {
         this.rooms[this.currentRoomIndex].peeps[i].evacuate = true;
@@ -115,14 +123,14 @@ export default {
     removePersonFromArray(person) {
       console.log("Trying to remvoe person");
       // find person in array... 
-      if (this.rooms[this.currentRoomIndex].peeps.length === 0) {
-        this.logs.unshift(`${this.beautifyDate(new Date(), false, true)}: Room successfully evacuated`);
-      }
-
       for (let i = this.rooms[this.currentRoomIndex].peeps.length - 1; i >= 0; i--) {
         if (this.rooms[this.currentRoomIndex].peeps[i].id == person.id) {
-          this.logs.unshift(`${this.beautifyDate(new Date(), false, true)}: ${this.rooms[this.currentRoomIndex].peeps[i].name} left the chat`);
+          this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: ${this.rooms[this.currentRoomIndex].peeps[i].name} left the room`, class: "bg-yellow-100" });
           this.rooms[this.currentRoomIndex].peeps.splice(i, 1);
+
+          if (this.rooms[this.currentRoomIndex].peeps.length === 1) {
+            this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: Room successfully evacuated`, class: "bg-yellow-100" });
+          }
         }
       }
     }
@@ -136,7 +144,7 @@ export default {
       rooms: [
         {
           id: 1,
-          people: 44,
+          people: 500,
           height: 800,
           width: 1000,
           image: "/sketch.jpg",

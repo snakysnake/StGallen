@@ -13,7 +13,7 @@
                 <slot />
                 <Person class="absolute" v-for="person in peeps" :key="person" :person="person"
                     :init-x-pos="person.xPos" :init-y-pos="person.yPos" :height="height" :width="width"
-                    @selected="selectPerson" @deleteme="deletePerson" />
+                    @selected="selectPerson" @deleteme="deletePerson" @evacme="evacPerson" />
             </div>
         </div>
     </div>
@@ -56,6 +56,9 @@ export default {
         },
         deletePerson(person) {
             this.$emit("deleteperson", person)
+        },
+        evacPerson(person) {
+            this.$emit("evacperson", person);
         }
     }
 }
