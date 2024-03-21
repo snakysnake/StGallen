@@ -143,29 +143,34 @@ export default {
 
                 // Find the minimum difference
                 let minDifference = Infinity;
-                let minSide = "";
+                let minSides = [];
 
                 for (const [side, difference] of Object.entries(differences)) {
                     if (difference < minDifference) {
                         minDifference = difference;
-                        minSide = side;
+                        minSides = [side]; // Reset minSides if a new minimum is found
+                    } else if (difference === minDifference) {
+                        minSides.push(side); // Add side to minSides if it has the same minimum difference
                     }
                 }
 
+                // Randomly select one of the sides from minSides
+                const randomMinSide = minSides[Math.floor(Math.random() * minSides.length)];
+
                 if (Math.random() < 90) {
-                    if (minSide === 'left') {
+                    if (randomMinSide === 'left') {
                         this.left();
                     }
 
-                    if (minSide === 'right') {
+                    if (randomMinSide === 'right') {
                         this.right();
                     }
 
-                    if (minSide === 'top') {
+                    if (randomMinSide === 'top') {
                         this.up();
                     }
 
-                    if (minSide === 'bottom') {
+                    if (randomMinSide === 'bottom') {
                         this.down();
                     }
                 }
