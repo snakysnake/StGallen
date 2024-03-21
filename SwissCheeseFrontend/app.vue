@@ -4,6 +4,17 @@
     <section class="flex w-full">
       <div class="w-full max-w-xl m-4">
         <SimpleList />
+        <div class="bg-green-50 p-1 border rounded max-h-[440px] overflow-y-scroll">
+          <div class="border-l-4 border-yellow-200 bg-yellow-50 p-4 mb-2" v-for="log in logs">
+            <div class="flex">
+              <div class="ml-3">
+                <p class="text-sm text-yellow-700">
+                  {{ log }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div>
         <Menu as="div" class="relative inline-block text-left ms-4">
@@ -63,11 +74,54 @@ export default {
 
       this.modalOpen = false;
     },
+    beautifyDate(date, dateOnly = false, timeOnly = false) {
+      try {
+        if (!(date instanceof Date)) {
+          console.warn("Wrong INPUT:", date);
+          return "";
+        }
+
+        if (dateOnly) {
+          return (
+            date.getDate() +
+            "." +
+            (date.getMonth() + 1) +
+            "." +
+            date.getFullYear()
+          );
+        }
+
+        if (timeOnly) {
+          return date.toLocaleTimeString("de-DE", {
+            timeStyle: "full"
+          }).substring(0, 5);
+        }
+
+        return (
+          date.getDate() +
+          "." +
+          (date.getMonth() + 1) +
+          "." +
+          date.getFullYear() +
+          " " +
+          date.toLocaleTimeString("de-DE", {
+            timeStyle: "full"
+          }).substring(0, 5)
+        );
+      } catch (e) {
+        return "";
+      }
+    },
     removePersonFromArray(person) {
       console.log("Trying to remvoe person");
       // find person in array... 
+      if (this.rooms[this.currentRoomIndex].peeps.length === 0) {
+        this.logs.unshift(`${this.beautifyDate(new Date(), false, true)}: Room successfully evacuated`);
+      }
+
       for (let i = this.rooms[this.currentRoomIndex].peeps.length - 1; i >= 0; i--) {
         if (this.rooms[this.currentRoomIndex].peeps[i].id == person.id) {
+          this.logs.unshift(`${this.beautifyDate(new Date(), false, true)}: ${this.rooms[this.currentRoomIndex].peeps[i].name} left the chat`);
           this.rooms[this.currentRoomIndex].peeps.splice(i, 1);
         }
       }
@@ -77,6 +131,7 @@ export default {
     return {
       modalOpen: false,
       ready: false,
+      logs: [],
       currentRoomIndex: 0,
       rooms: [
         {
