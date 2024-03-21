@@ -1,7 +1,8 @@
 <template>
-    <div class="bg-red-500 p-1 rounded-full" :style="`left: ${xPos}px; top: ${yPos}px;`">
+    <div class="bg-red-400 p-2 rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`"
+        @click="$emit('stuff')">
         <div class="relative">
-            <div class="p-2 bg-red-400 absolute transition-opacity rounded-full"
+            <div class="p-2 bg-red-200 absolute transition-opacity rounded-full"
                 :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
                 :class="movedRecently ? 'opacity-50' : 'opacity-0'">
             </div>
@@ -31,7 +32,7 @@ export default {
     },
     data() {
         return {
-            stop: false,
+            wait: false,
             yPos: 0,
             xPos: 0,
             movedRecently: false,
@@ -39,29 +40,29 @@ export default {
         }
     },
     watch: {
-        async yPos() {
-            if (!this.stop) {
-                await this.sleep(Math.floor(Math.random() * 5000));
-                if (!this.movedRecently) {
-                    this.move();
-                }
-
+        async yPos(nPos, oldPos) {
+            this.movementAmount = Math.ceil(Math.random() * 60);
+            if (!this.wait) {
                 if (this.yPos > this.height - 10 || this.yPos < 2) {
                     this.yPos = this.initYPos;
                 }
+                this.wait = true;
+                await this.sleep(Math.ceil(Math.random() * 200));
+                this.move();
             }
+            this.wait = false;
         },
-        async xPos() {
-            if (!this.stop) {
-                await this.sleep(Math.floor(Math.random() * 5000));
-                if (!this.movedRecently) {
-                    this.move();
-                }
-
+        async xPos(nPos, oldPos) {
+            this.movementAmount = Math.ceil(Math.random() * 60);
+            if (!this.wait) {
                 if (this.xPos > this.width - 10 || this.xPos < 2) {
                     this.xPos = this.initXPos;
                 }
+                this.wait = true;
+                await this.sleep(Math.floor(Math.random() * 200));
+                this.move();
             }
+            this.wait = false;
         },
         async movedRecently(newVal) {
             if (newVal === true) {
@@ -78,8 +79,6 @@ export default {
         move() {
             // Function to simulate movement
             const rand = Math.random();
-            this.movementAmount = Math.floor(Math.random() * 50);
-
             if (rand <= 0.25) {
                 this.right();
             }
@@ -94,48 +93,20 @@ export default {
             }
         },
         up() {
-            if (this.yPos < this.movementAmount) {
-                // correctional movement, down
-                this.down();
-            }
-            else {
-                // up
-                this.yPos = this.yPos + this.movementAmount;
-                this.movedRecently = true;
-            }
+            this.yPos = this.yPos + this.movementAmount;
+            this.movedRecently = true;
         },
         down() {
-            if (this.yPos > this.height - this.movementAmount) {
-                // correctional movement, up
-                this.up();
-            }
-            else {
-                // down
-                this.yPos = this.yPos - this.movementAmount;
-                this.movedRecently = true;
-            }
+            this.yPos = this.yPos - this.movementAmount;
+            this.movedRecently = true;
         },
         left() {
-            if (this.xPos <= this.movementAmount) {
-                // correctional movement, right
-                this.right();
-            }
-            else {
-                // left
-                this.xPos = this.xPos - this.movementAmount;
-                this.movedRecently = true;
-            }
+            this.xPos = this.xPos - this.movementAmount;
+            this.movedRecently = true;
         },
         right() {
-            if (this.xPos >= this.width + this.movementAmount) {
-                // correctional movement, left
-                this.left();
-            }
-            else {
-                // right
-                this.xPos = this.xPos + this.movementAmount;
-                this.movedRecently = true;
-            }
+            this.xPos = this.xPos + this.movementAmount;
+            this.movedRecently = true;
         },
         sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));

@@ -1,9 +1,10 @@
 <template>
-    <div class="border-2" :class="`width: ${width}px; height: ${height}px;`">
+    <div class="border-2 overflow-hidden" :style="`max-width: ${width}px; max-height: ${height}px;`">
         <div class="relative">
             <img src="/sketch.jpg" alt="Floorplan">
             <Person class="absolute" v-for="person in peeps" :key="person" :init-x-pos="person.xPos"
-                :init-y-pos="person.yPos" />
+                :init-y-pos="person.yPos" :height="height" :width="width" />
+
         </div>
     </div>
 </template>
@@ -26,7 +27,8 @@ export default {
     },
     data() {
         return {
-            peeps: []
+            peeps: [],
+            modalOpen: false
         }
     },
     created() {
