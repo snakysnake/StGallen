@@ -18,6 +18,7 @@ import 'dart:math';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_archive/flutter_archive.dart';
+import 'package:sensors/sensors.dart';
 
 class DirectionArrowWidget extends StatefulWidget {
   DirectionArrowWidget({Key? key}) : super(key: key);
@@ -31,6 +32,26 @@ class _LocalAndWebObjectsWidgetState extends State<DirectionArrowWidget> {
   ARObjectManager? arObjectManager;
   List<ARNode?> localObjectNodes = [];
   Location location = Location();
+  LocationData? currentLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    retrieveLocation();
+    // Start tracking user position
+    trackDeviceMotion();
+  }
+
+  Future<void> retrieveLocation() async {
+    try {
+      LocationData locationData = await location.getLocation();
+      setState(() {
+        currentLocation = locationData;
+      });
+    } catch (e) {
+      print('Failed to get location: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -51,6 +72,15 @@ class _LocalAndWebObjectsWidgetState extends State<DirectionArrowWidget> {
               onARViewCreated: onARViewCreated,
               planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
             ),
+            (currentLocation != null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Latitude: ${currentLocation!.latitude}'),
+                      Text('Longitude: ${currentLocation!.longitude}'),
+                    ],
+                  )
+                : CircularProgressIndicator()),
             Align(
               alignment: FractionalOffset.bottomCenter,
               child: Column(
@@ -58,7 +88,7 @@ class _LocalAndWebObjectsWidgetState extends State<DirectionArrowWidget> {
                 children: [
                   ElevatedButton(
                     onPressed: onLocalObjectAtOriginButtonPressed,
-                    child: Text("Direction"),
+                    child: Text("Show me the safe route!"),
                   ),
                 ],
               ),
@@ -74,10 +104,6 @@ class _LocalAndWebObjectsWidgetState extends State<DirectionArrowWidget> {
       ARObjectManager arObjectManager,
       ARAnchorManager arAnchorManager,
       ARLocationManager arLocationManager) {
-    location.onLocationChanged.listen((LocationData newLocation) {
-      print("Location Tracked");
-      trackUserPosition();
-    });
     this.arSessionManager = arSessionManager;
     this.arObjectManager = arObjectManager;
 
@@ -125,33 +151,95 @@ class _LocalAndWebObjectsWidgetState extends State<DirectionArrowWidget> {
     return null;
   }
 
+  Future<void> initLocation() async {
+    // Check if location services are enabled
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    // Request location permissions
+    PermissionStatus permissionStatus = await location.hasPermission();
+    if (permissionStatus == PermissionStatus.denied) {
+      permissionStatus = await location.requestPermission();
+      if (permissionStatus != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    bool trackCalled = false;
+
+    // Subscribe to location updates
+    location.onLocationChanged.listen((LocationData newLocation) {
+      // Update previous location
+      setState(() {
+        if (!trackCalled) {
+          trackCalled = true;
+          trackUserPosition();
+          trackCalled = false;
+        }
+      });
+    });
+  }
+
+  void trackDeviceMotion() async {
+    await initLocation();
+
+    bool trackCalled = false;
+
+    accelerometerEvents.listen((AccelerometerEvent event) {
+      // Convert accelerometer data into a Vector3 instance
+      Vector3 acceleration = Vector3(event.x, event.y, event.z);
+      if (!trackCalled) {
+        trackCalled = true;
+        trackUserPosition();
+        trackCalled = false;
+      }
+    });
+
+    gyroscopeEvents.listen((GyroscopeEvent event) {
+      // Convert gyroscope data into a Vector3 instance
+      Vector3 rotationRate = Vector3(event.x, event.y, event.z);
+      if (!trackCalled) {
+        trackCalled = true;
+        trackUserPosition();
+        trackCalled = false;
+      }
+    });
+  }
+
   // Continuously track user position (example)
   void trackUserPosition() async {
     // Update user position based on device motion or ARKit/ARCore
     Vector3? userPosition = await getCurrentUserPosition();
 
     // Check for intersection with each arrow
-    while (!localObjectNodes.isEmpty &&
-        isUserNearArrow(userPosition, localObjectNodes[0]?.position)) {
+    while (!localObjectNodes.isEmpty && isUserNearAnyArrow(userPosition)) {
       // User crossed the arrow, trigger event
       handleArrowCrossed();
     }
   }
 
   // Check if user is near the arrow (example)
-  bool isUserNearArrow(Vector3? userPosition, Vector3? arrowPosition) {
-    if (userPosition == null) return true;
-    if (arrowPosition == null) return true;
-    double distanceThreshold = 0.5; // Adjust threshold as needed
-    double distance = userPosition.distanceTo(arrowPosition);
+  bool isUserNearAnyArrow(Vector3? userPosition) {
+    if (userPosition == null) return false;
+    if (localObjectNodes.isEmpty) return false;
+    double distanceThreshold = 1.0; // Adjust threshold as needed
 
-    // Log user position
-    print('User Position: ${userPosition.toString()}');
+    for (var arrowPosition in localObjectNodes) {
+      if (arrowPosition == null) return true;
+      double distance = userPosition.distanceTo(arrowPosition.position);
 
-    // Log arrow position
-    print('Arrow Position: ${arrowPosition.toString()}');
-
-    return distance < distanceThreshold;
+      if (distance < distanceThreshold) {
+        print(
+            'Result: User Position: ${userPosition.toString()}, Arrow Position: ${arrowPosition.toString()},  ${distance}, ${distance < distanceThreshold}');
+        return true;
+      }
+    }
+    return false;
   }
 
 // Event handler for when an arrow is crossed (example)
@@ -163,8 +251,12 @@ class _LocalAndWebObjectsWidgetState extends State<DirectionArrowWidget> {
       type: NodeType.localGLTF2,
       uri: "Models/direction_arrow/scene.gltf", // Adjust the path as needed
       scale: Vector3(0.2, 0.2, 0.2),
-      position: Vector3(0.0, -0.9,
-          localObjectNodes[localObjectNodes.length - 1]!.position.z - 1),
+      position: Vector3(
+          0.0,
+          -0.9,
+          localObjectNodes.isEmpty
+              ? 0.0
+              : localObjectNodes[localObjectNodes.length - 1]!.position.z - 1),
       rotation: Vector4(0.0, 1.0, 0.0, 45.5),
     );
     bool? didAddLocalNode = await this.arObjectManager!.addNode(newNode);

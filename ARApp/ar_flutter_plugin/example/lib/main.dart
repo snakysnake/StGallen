@@ -1,21 +1,26 @@
-import 'package:ar_flutter_plugin_example/examples/direction_arrow.dart';
-import 'package:ar_flutter_plugin_example/examples/objectsonplanesexample.dart';
-import 'package:ar_flutter_plugin_example/examples/test.dart';
+import 'package:ar_flutter_plugin_example/app_list.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:ar_flutter_plugin/ar_flutter_plugin.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:ar_flutter_plugin_example/examples/localandwebobjectsexample.dart';
-import 'package:ar_flutter_plugin_example/examples/debugoptionsexample.dart';
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
-import 'examples/objectgesturesexample.dart';
-import 'examples/screenshotexample.dart';
-
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _initializeNotifications();
   runApp(MyApp());
+}
+
+Future<void> _initializeNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('mipmap/ic_launcher');
+  final InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }
 
 class MyApp extends StatefulWidget {
@@ -69,85 +74,4 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-}
-
-class ExampleList extends StatelessWidget {
-  ExampleList({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final examples = [
-      Example(
-          'Direction Arrow',
-          'Direction guide',
-          () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DirectionArrowWidget()))),
-      Example(
-          'ARScreenTest',
-          'ARScreen Test',
-          () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ARScreenTest()))),
-      Example(
-          'Debug Options',
-          'Visualize feature points, planes and world coordinate system',
-          () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DebugOptionsWidget()))),
-      Example(
-          'Local & Online Objects',
-          'Place 3D objects from Flutter assets and the web into the scene',
-          () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => LocalAndWebObjectsWidget()))),
-      Example(
-          'Anchors & Objects on Planes',
-          'Place 3D objects on detected planes using anchors',
-          () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ObjectsOnPlanesWidget()))),
-      Example(
-          'Object Transformation Gestures',
-          'Rotate and Pan Objects',
-          () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ObjectGesturesWidget()))),
-      Example(
-          'Screenshots',
-          'Place 3D objects on planes and take screenshots',
-          () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ScreenshotWidget()))),
-    ];
-    return ListView(
-      children:
-          examples.map((example) => ExampleCard(example: example)).toList(),
-    );
-  }
-}
-
-class ExampleCard extends StatelessWidget {
-  ExampleCard({Key? key, required this.example}) : super(key: key);
-  final Example example;
-
-  @override
-  build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        splashColor: Colors.blue.withAlpha(30),
-        onTap: () {
-          example.onTap();
-        },
-        child: ListTile(
-          title: Text(example.name),
-          subtitle: Text(example.description),
-        ),
-      ),
-    );
-  }
-}
-
-class Example {
-  const Example(this.name, this.description, this.onTap);
-  final String name;
-  final String description;
-  final Function onTap;
 }
