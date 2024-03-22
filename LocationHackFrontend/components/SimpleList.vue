@@ -12,11 +12,11 @@
                             @click="$emit('unpin', person)" class="italic">x </span>{{ person.name
                         }}</label>
                 </div>
-                <button type="button"
-                    class="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Call</button>
-                <button type="button"
+                <a :href="`tel:${person.phone}`" type="button"
+                    class="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Call</a>
+                <a :href="`mailto: ${person.email}`" type="button"
                     class="rounded-full ml-2 bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Send
-                    message</button>
+                    message</a>
             </div>
         </div>
     </fieldset>
