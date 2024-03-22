@@ -1,6 +1,10 @@
 <template>
   <div v-if="ready">
-    <Stats />
+    <Stats :stats="[
+    { name: 'Total People', stat: totalPersons },
+    { name: 'Evacuation Count', stat: totalEvac },
+    { name: 'Evacuation Rate', stat: `${Number(totalEvac / totalPersons * 100).toFixed(2)}%` }
+  ]" />
     <section class="flex w-full">
       <div class="w-full max-w-xl m-4">
         <SimpleList :persons="selectedPersons" @unpin="selectPerson" />
@@ -90,6 +94,7 @@ export default {
         if (this.rooms[this.currentRoomIndex].peeps[i].id == person.id) {
           this.rooms[this.currentRoomIndex].peeps[i].evacuate = true;
           this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: User evacuating (${person.name})`, class: "bg-red-300 border-red-500" });
+          this.totalEvac++;
         }
       }
     },
@@ -147,6 +152,8 @@ export default {
           this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: ${this.rooms[this.currentRoomIndex].peeps[i].name} left the room`, class: "bg-yellow-100 border-yellow-300" });
           this.rooms[this.currentRoomIndex].peeps.splice(i, 1);
 
+          this.totalEvac++;
+
           if (this.rooms[this.currentRoomIndex].peeps.length === 1) {
             this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: Room successfully evacuated`, class: "bg-green-100 bg-green-400" });
           }
@@ -161,6 +168,8 @@ export default {
       logs: [],
       selectedPersons: [],
       currentRoomIndex: 0,
+      totalPersons: 0,
+      totalEvac: 0,
       rooms: [
         {
           id: 1,
@@ -204,6 +213,7 @@ export default {
         const name = firstNames[Math.floor(Math.random() * firstNames.length)] + " " + lastNames[Math.floor(Math.random() * lastNames.length)];
         const mail = emails[Math.floor(Math.random() * emails.length)];
         const phone = phones[Math.floor(Math.random() * phones.length)];
+        this.totalPersons++;
 
         this.rooms[n].peeps.push({
           name: name,
