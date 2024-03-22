@@ -11,7 +11,7 @@
         <div class="rounded-lg">
             <div class="relative border-t-2">
                 <slot />
-                <Person class="absolute" v-for="person in peeps" :key="person" :person="person"
+                <Minion class="absolute" v-for="person in peeps" :key="person" :person="person"
                     :init-x-pos="person.xPos" :init-y-pos="person.yPos" :height="height" :width="width"
                     @selected="selectPerson" @deleteme="deletePerson" @evacme="evacPerson" />
             </div>

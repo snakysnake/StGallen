@@ -2,7 +2,7 @@
     <div class="rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`" :class="parentClasses"
         @click="$emit('selected', person)">
         <div class="relative">
-            <img src="/minidance.gif" class="w-12 h-12" alt="">
+            <img :src="img" class="min-w-12 min-h-12 absolute -top-4 -left-4" alt="Minion">
             <div v-if="movedRecently" class="min-w-3 max-h-3 min-h-3 max-w-3 p-1 mb-1 -top-3 absolute text-xs -left-2">
                 <div>
                     {{ lastMovement }}
@@ -18,6 +18,9 @@
 
 <script>
 export default {
+    created() {
+        this.img = "/minidance2.gif"
+    },
     props: {
         initXPos: {
             type: Number,
@@ -69,7 +72,8 @@ export default {
             xPos: 0,
             movedRecently: false,
             movementAmount: 0,
-            lastMovement: ""
+            lastMovement: "",
+            img: "",
         }
     },
     watch: {
@@ -80,6 +84,7 @@ export default {
                 }
             }
             if (this.person.evacuate) {
+                this.img = "/minidance.gif"
                 this.emitDeletionIfNeeded()
             }
             this.movementAmount = Math.ceil(Math.random() * 25);
@@ -107,6 +112,7 @@ export default {
         },
         async xPos(nPos, oldPos) {
             if (this.person.evacuate) {
+                this.img = "/minidance.gif"
                 this.emitDeletionIfNeeded()
             }
             this.movementAmount = Math.ceil(Math.random() * 25);
@@ -199,6 +205,12 @@ export default {
                         this.down();
                     }
                 }
+
+                const ohnos = ["oh no", "ruuuuuun", "run run run"];
+
+                if (Math.random() > 0.5) {
+                    this.lastMovement = ohnos[Math.floor(Math.random() * ohnos.length)]
+                }
             }
             else {
                 if (rand <= 0.25) {
@@ -212,6 +224,13 @@ export default {
                 }
                 else {
                     this.down();
+                }
+
+
+                const nicies = ["banana", "banananana"];
+
+                if (Math.random() > 0.8) {
+                    this.lastMovement = nicies[Math.floor(Math.random() * nicies.length)]
                 }
             }
         },
