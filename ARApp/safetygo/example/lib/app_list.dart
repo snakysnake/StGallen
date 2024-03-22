@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:safetygo/examples/debugoptionsexample.dart';
 import 'package:safetygo/examples/direction_arrow.dart';
-import 'package:safetygo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:safetygo/notification.dart';
 
 class ExampleCard extends StatefulWidget {
   ExampleCard({Key? key, required this.example}) : super(key: key);
@@ -16,6 +16,7 @@ class ExampleCard extends StatefulWidget {
 
 class _ExampleCardState extends State<ExampleCard> {
   String buttonText = '';
+  String descriptionText = '';
   late Timer _timer;
   int _countdown = 5;
 
@@ -23,6 +24,7 @@ class _ExampleCardState extends State<ExampleCard> {
   void initState() {
     super.initState();
     buttonText = widget.example.name;
+    descriptionText = widget.example.description;
   }
 
   @override
@@ -36,12 +38,14 @@ class _ExampleCardState extends State<ExampleCard> {
       if (_countdown > 0) {
         setState(() {
           _countdown--;
-          buttonText = 'Message Sent ($_countdown)';
+          buttonText = 'Message Sent! Wait ($_countdown) Seconds.';
+          descriptionText = 'Rescue team is on the way.';
         });
       } else {
         _timer.cancel();
         setState(() {
           buttonText = 'I am in emergency!';
+          descriptionText = 'Request a rescue.';
           _countdown = 10;
         });
       }
@@ -52,7 +56,7 @@ class _ExampleCardState extends State<ExampleCard> {
   Widget build(BuildContext context) {
     return Card(
       color: buttonText == 'I am in emergency!'
-          ? Colors.red
+          ? Colors.orange
           : buttonText.startsWith('Message Sent')
               ? Colors.green
               : null,
@@ -61,13 +65,14 @@ class _ExampleCardState extends State<ExampleCard> {
         onTap: () {
           if (buttonText == 'I am in emergency!') {
             setState(() {
-              buttonText = 'Message Sent ($_countdown)';
+              buttonText = 'Message Sent! Wait ($_countdown) Seconds.';
+              descriptionText = 'Rescue team is on the way.';
             });
             startCountdown();
             // Code to send the alert message
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Message sent'),
+                content: Text('Message sent!'),
               ),
             );
           } else {
@@ -76,7 +81,7 @@ class _ExampleCardState extends State<ExampleCard> {
         },
         child: ListTile(
           title: Text(buttonText),
-          subtitle: Text(widget.example.description),
+          subtitle: Text(descriptionText),
         ),
       ),
     );
@@ -108,11 +113,12 @@ class ExampleList extends StatelessWidget {
       Example(
         'Send Notification',
         'Simulate receiving notification',
-        () => _showNotification("Its an emergency!", "Evacuate the Building."),
+        () => NotificationManager.sendNotification(
+            "Its an emergency!", "Evacuate the Building.", context),
       ),
       Example(
         'I am in emergency!',
-        'Sends an alert',
+        'Request a rescue.',
         () {
           // Code to send alerts
         },
@@ -130,26 +136,4 @@ class Example {
   final String name;
   final String description;
   final Function onTap;
-}
-
-Future<void> _showNotification(String title, String body) async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails(
-          'channel_id', // Replace with your channel ID
-          'alert_notifications', // Replace with your channel name
-          channelDescription: 'Alert notifications',
-          importance: Importance.max,
-          priority: Priority.high,
-          playSound: true,
-          enableVibration: true,
-          showWhen: true,
-          sound: RawResourceAndroidNotificationSound('alert'));
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    title,
-    body,
-    platformChannelSpecifics,
-  );
 }

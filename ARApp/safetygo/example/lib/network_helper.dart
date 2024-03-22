@@ -9,8 +9,7 @@ class NetworkHelper {
       required this.endLat});
 
   final String url = 'https://api.openrouteservice.org/v2/directions/';
-  final String apiKey =
-      '5b3ce3597851110001cf624825fe64233a7545d99148a5a0350f7f92';
+  final String apiKey = '<API_KEY>';
   final String pathParam = 'foot-walking'; // Change it if you want
   final double startLng;
   final double startLat;
