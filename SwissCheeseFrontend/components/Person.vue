@@ -1,25 +1,18 @@
 <template>
     <div class="p-2 rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`" :class="parentClasses"
         @click="$emit('selected', person)">
-        <div class="w-3 h-3 mb-1">
-            <div v-if="lastMovement === 'right'">
-                {{ '>' }}
+        <div class="relative">
+            <div v-if="movedRecently" class="min-w-3 max-h-3 min-h-3 max-w-3 p-1 mb-1 -top-3 absolute text-xs -left-2">
+                <div>
+                    {{ lastMovement }}
+                </div>
             </div>
-            <div v-if="lastMovement === 'left'">
-                {{ '<' }} </div>
-                    <div v-if="lastMovement === 'up'" class="rotate-90">
-                        {{ '<' }} </div>
-                            <div v-if="lastMovement === 'down'" class="rotate-90">
-                                {{ '>' }}
-                            </div>
-                    </div>
-                    <div class="relative">
-                        <div class="p-2 absolute transition-opacity rounded-full"
-                            :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
-                            :class="childClasses">
-                        </div>
-                    </div>
-            </div>
+        </div>
+        <div class="p-2 absolute transition-opacity rounded-full"
+            :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
+            :class="childClasses">
+        </div>
+    </div>
 </template>
 
 <script>
@@ -80,8 +73,10 @@ export default {
     },
     watch: {
         async yPos(nPos, oldPos) {
-            if (Math.random() > 0.999) {
-                this.$emit("evacme", this.person);
+            if (!this.person.evacuate) {
+                if (Math.random() > 0.999) {
+                    this.$emit("evacme", this.person);
+                }
             }
             if (this.person.evacuate) {
                 this.emitDeletionIfNeeded()
@@ -179,8 +174,12 @@ export default {
                     }
                 }
 
+
                 // Randomly select one of the sides from minSides
-                const randomMinSide = minSides[Math.floor(Math.random() * minSides.length)];
+                let randomMinSide = minSides[Math.floor(Math.random() * minSides.length)];
+                if (differences.bottom < randomMinSide) {
+                    randomMinSide = 'bottom';
+                }
 
                 if (Math.random() < 90) {
                     if (randomMinSide === 'left') {

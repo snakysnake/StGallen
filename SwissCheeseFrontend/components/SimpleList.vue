@@ -1,27 +1,34 @@
 <template>
     <fieldset>
-        <legend class="text-base font-semibold leading-6 text-gray-900">Members</legend>
-        <div class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
-            <div v-for="(person, personIdx) in people" :key="personIdx" class="relative flex items-start py-4">
+        <legend class="text-base font-semibold leading-6 text-gray-900 m-2">Members</legend>
+        <div class="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200 min-h-[400px] max-h-[400px]
+            bg-gray-100 w-full p-2 rounded">
+            <p v-if="persons.length == 0">
+                Pin persons to message or call them
+            </p>
+            <div v-for="(person, personIdx) in persons" :key="personIdx" class="relative flex items-start py-4">
                 <div class="min-w-0 flex-1 text-sm leading-6">
-                    <label :for="`person-${person.id}`" class="select-none font-medium text-gray-900">{{ person.name
+                    <label :for="`person-${person.id}`" class="select-none font-medium text-gray-900"><span
+                            @click="$emit('unpin', person)" class="italic">x </span>{{ person.name
                         }}</label>
                 </div>
-                <div class="ml-3 flex h-6 items-center">
-                    <input :id="`person-${person.id}`" :name="`person-${person.id}`" type="checkbox"
-                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
-                </div>
+                <button type="button"
+                    class="rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Call</button>
+                <button type="button"
+                    class="rounded-full ml-2 bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Send
+                    message</button>
             </div>
         </div>
     </fieldset>
 </template>
 
-<script setup>
-const people = [
-    { id: 1, name: 'SOS' },
-    { id: 2, name: 'No Answer' },
-    { id: 3, name: 'Courtney Henry' },
-    { id: 4, name: 'Kathryn Murphy' },
-    { id: 5, name: 'Theresa Webb' }
-]
+<script>
+export default {
+    props: {
+        persons: {
+            type: Array,
+            default: () => []
+        }
+    }
+}
 </script>
