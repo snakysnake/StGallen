@@ -73,7 +73,7 @@ import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 export default {
   methods: {
     selectPerson(person) {
-      const match = false;
+      let match = false;
       for (let i = this.selectedPersons.length - 1; i >= 0; i--) {
         if (this.selectedPersons[i].id == person.id) {
           this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: ${person.name} unpinned`, class: "bg-amber-100 border-amber-300" });
