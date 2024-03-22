@@ -1,12 +1,16 @@
 <template>
     <div class="p-2 rounded-full cursor-pointer" :style="`left: ${xPos}px; top: ${yPos}px;`" :class="parentClasses"
         @click="$emit('selected', person)">
-        {{ lastMovement }}
         <div class="relative">
-            <div class="p-2 absolute transition-opacity rounded-full"
-                :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
-                :class="childClasses">
+            <div v-if="movedRecently" class="min-w-3 max-h-3 min-h-3 max-w-3 p-1 mb-1 -top-3 absolute text-xs -left-2">
+                <div>
+                    {{ lastMovement }}
+                </div>
             </div>
+        </div>
+        <div class="p-2 absolute transition-opacity rounded-full"
+            :style="`left: -${movementAmount}px; top: -${movementAmount}px; padding: ${movementAmount}px;`"
+            :class="childClasses">
         </div>
     </div>
 </template>
@@ -69,6 +73,14 @@ export default {
     },
     watch: {
         async yPos(nPos, oldPos) {
+            if (!this.person.evacuate) {
+                if (Math.random() > 0.999) {
+                    this.$emit("evacme", this.person);
+                }
+            }
+            if (this.person.evacuate) {
+                this.emitDeletionIfNeeded()
+            }
             this.movementAmount = Math.ceil(Math.random() * 25);
 
             if (this.person.evacuate) {
@@ -93,6 +105,9 @@ export default {
             this.wait = false;
         },
         async xPos(nPos, oldPos) {
+            if (this.person.evacuate) {
+                this.emitDeletionIfNeeded()
+            }
             this.movementAmount = Math.ceil(Math.random() * 25);
 
             if (this.person.evacuate) {
@@ -128,6 +143,11 @@ export default {
         this.yPos = this.initYPos;
     },
     methods: {
+        emitDeletionIfNeeded() {
+            if (this.yPos < 0 || this.xPos < 0 || this.xPos > this.width || this.yPos > this.height) {
+                this.$emit("deleteme", this.person);
+            }
+        },
         move() {
             // Function to simulate movement
             let rand = Math.random();
@@ -154,8 +174,12 @@ export default {
                     }
                 }
 
+
                 // Randomly select one of the sides from minSides
-                const randomMinSide = minSides[Math.floor(Math.random() * minSides.length)];
+                let randomMinSide = minSides[Math.floor(Math.random() * minSides.length)];
+                if (differences.bottom < randomMinSide) {
+                    randomMinSide = 'bottom';
+                }
 
                 if (Math.random() < 90) {
                     if (randomMinSide === 'left') {

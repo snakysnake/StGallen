@@ -3,7 +3,19 @@
     <Stats />
     <section class="flex w-full">
       <div class="w-full max-w-xl m-4">
-        <SimpleList />
+        <SimpleList :persons="selectedPersons" @unpin="selectPerson" />
+        <div class="bg-green-50 p-1 border rounded min-h-[440px] max-h-[440px] overflow-y-scroll">
+          <h3 class="p-2 italic font-bold">Logs:</h3>
+          <div class="border-l-4 p-4 mb-2" v-for="log in logs" :class="log.class">
+            <div class="flex">
+              <div class="ml-3">
+                <p class="text-sm text-black">
+                  {{ log.message }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div>
         <Menu as="div" class="relative inline-block text-left ms-4">
@@ -34,7 +46,8 @@
         <button @click="this.modalOpen = true"
           class="mx-2 text-red-500 p-2 bg-red-100 rounded-lg mt-1">Evacuate</button>
         <TwoDimensionalMap :peeps="rooms[currentRoomIndex].peeps" :height="rooms[currentRoomIndex].height"
-          :width="rooms[currentRoomIndex].width" :name="rooms[currentRoomIndex].name">
+          :width="rooms[currentRoomIndex].width" :name="rooms[currentRoomIndex].name"
+          @deleteperson="removePersonFromArray" @evacperson="evacPerson" @selected="selectPerson">
           <img :src="rooms[currentRoomIndex].image" :alt="rooms[currentRoomIndex].name">
         </TwoDimensionalMap>
       </div>
@@ -55,24 +68,104 @@ import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 <script>
 export default {
   methods: {
+    selectPerson(person) {
+      const match = false;
+      for (let i = this.selectedPersons.length - 1; i >= 0; i--) {
+        if (this.selectedPersons[i].id == person.id) {
+          this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: ${person.name} unpinned`, class: "bg-amber-100 border-amber-300" });
+          this.selectedPersons.splice(i, 1);
+          match = true;
+        }
+      }
+
+      if (match) {
+        return;
+      }
+
+      this.selectedPersons.push(person);
+      this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: User pinned (${person.name})`, class: "bg-amber-300 border-amber-500" });
+    },
+    evacPerson(person) {
+      for (let i = this.rooms[this.currentRoomIndex].peeps.length - 1; i >= 0; i--) {
+        if (this.rooms[this.currentRoomIndex].peeps[i].id == person.id) {
+          this.rooms[this.currentRoomIndex].peeps[i].evacuate = true;
+          this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: User evacuating (${person.name})`, class: "bg-red-300 border-red-500" });
+        }
+      }
+    },
     sendIt() {
       for (let i = 0; i < this.rooms[this.currentRoomIndex].peeps.length; i++) {
         this.rooms[this.currentRoomIndex].peeps[i].evacuate = true;
       }
+      this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: Room Evacuation started (${this.rooms[this.currentRoomIndex].name})`, class: "bg-blue-300 border-blue-500" });
 
       this.modalOpen = false;
     },
+    beautifyDate(date, dateOnly = false, timeOnly = false) {
+      try {
+        if (!(date instanceof Date)) {
+          console.warn("Wrong INPUT:", date);
+          return "";
+        }
+
+        if (dateOnly) {
+          return (
+            date.getDate() +
+            "." +
+            (date.getMonth() + 1) +
+            "." +
+            date.getFullYear()
+          );
+        }
+
+        if (timeOnly) {
+          return date.toLocaleTimeString("de-DE", {
+            timeStyle: "full"
+          }).substring(0, 5);
+        }
+
+        return (
+          date.getDate() +
+          "." +
+          (date.getMonth() + 1) +
+          "." +
+          date.getFullYear() +
+          " " +
+          date.toLocaleTimeString("de-DE", {
+            timeStyle: "full"
+          }).substring(0, 5)
+        );
+      } catch (e) {
+        return "";
+      }
+    },
+    removePersonFromArray(person) {
+      console.log("Trying to remvoe person");
+      // find person in array... 
+      for (let i = this.rooms[this.currentRoomIndex].peeps.length - 1; i >= 0; i--) {
+        if (this.rooms[this.currentRoomIndex].peeps[i].id == person.id) {
+          this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: ${this.rooms[this.currentRoomIndex].peeps[i].name} left the room`, class: "bg-yellow-100 border-yellow-300" });
+          this.rooms[this.currentRoomIndex].peeps.splice(i, 1);
+
+          if (this.rooms[this.currentRoomIndex].peeps.length === 1) {
+            this.logs.unshift({ message: `${this.beautifyDate(new Date(), false, true)}: Room successfully evacuated`, class: "bg-green-100 bg-green-400" });
+          }
+        }
+      }
+    }
   },
   data() {
     return {
       modalOpen: false,
       ready: false,
+      logs: [],
+      selectedPersons: [],
       currentRoomIndex: 0,
       rooms: [
         {
           id: 1,
-          people: 44,
-          height: 800,
+          people: 123,
+          height: 500,
           width: 1000,
           image: "/sketch.jpg",
           name: "Room 1",
