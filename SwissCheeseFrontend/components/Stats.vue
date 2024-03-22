@@ -1,6 +1,6 @@
 <template>
     <div class="p-3">
-        <h3 class="text-base font-semibold leading-6 text-gray-900">Last 30 days</h3>
+        <h3 class="text-base font-semibold leading-6 text-gray-900">Today</h3>
         <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
             <div v-for="item in stats" :key="item.name"
                 class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
@@ -11,10 +11,13 @@
     </div>
 </template>
 
-<script setup>
-const stats = [
-    { name: 'Total Subscribers', stat: '71,897' },
-    { name: 'Avg. Open Rate', stat: '58.16%' },
-    { name: 'Avg. Click Rate', stat: '24.57%' },
-]
+<script>
+export default {
+    props: {
+        stats: {
+            type: Array,
+            default: []
+        }
+    }
+}
 </script>
