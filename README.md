@@ -5,6 +5,10 @@
 ## Leveraging accurate information data for safety improvments
 With the help of accurate location data and augmented technology, we provide two powerful solutions for enhancing customer safety.
 
+<b>Safety Go YouTube Video:</b>
+
+[![Short Introduction Video](https://img.youtube.com/vi/k7oCZmPxOyQ/0.jpg)](https://www.youtube.com/watch?v=k7oCZmPxOyQ)
+
 ### AR powered Exit-Location finder
 Find the nearest exit, even in the darkest of times - using our AR powered exit finder.
 
